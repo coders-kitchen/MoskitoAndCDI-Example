@@ -1,0 +1,21 @@
+apply plugin: 'war'
+
+repositories {
+	mavenCentral()
+	maven {
+        url 'http://nexus.anotheria.net/nexus/content/repositories/releases/'
+    }
+}
+
+project.ext {
+    moskitoGroup = 'net.anotheria'
+    moskitoVersion = '2.1.4'
+}
+
+configurations.all*.exclude group: 'blowfish'
+
+dependencies {
+	compile 'javax:javaee-web-api:6.0'
+    compile "${moskitoGroup}:moskito-core:${moskitoVersion}",
+            "${moskitoGroup}:moskito-cdi:${moskitoVersion}"
+}
