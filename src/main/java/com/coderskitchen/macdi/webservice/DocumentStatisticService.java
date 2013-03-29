@@ -6,6 +6,8 @@ import com.coderskitchen.macdi.process.ProcessBoundary;
 import com.coderskitchen.macdi.statistic.DocumentStatisticBoundary;
 import net.anotheria.moskito.integration.cdi.Count;
 import net.anotheria.moskito.integration.cdi.Monitor;
+import net.anotheria.moskito.integration.cdi.MonitoringCategorySelector;
+import net.anotheria.moskito.integration.cdi.ProducerDefinition;
 
 import javax.annotation.ManagedBean;
 import javax.inject.Inject;
@@ -21,10 +23,13 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.util.HashMap;
 
+/**
+ * This class is the entry point for the restful webservice
+ */
 @Path("/document")
 @ManagedBean
+@ProducerDefinition(category = "", producerId = "DocumentStatisticService")
 public class DocumentStatisticService {
 
 	@Context
@@ -36,7 +41,7 @@ public class DocumentStatisticService {
 
 	@PUT
 	@Consumes({MediaType.APPLICATION_JSON})
-	@Monitor
+	@Monitor(MonitoringCategorySelector.WEB)
 	public Response uploadAndQueueDocument(String jsonDocument) {
 		String document = jsonDocument;
 		String newProcessId = pb.createNewProcessId();
@@ -51,7 +56,7 @@ public class DocumentStatisticService {
 	@GET
 	@Path("{processId}/{word}")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Count
+	@Count()
 	public Response getCountingForWord(@PathParam("processId") String processId, @PathParam("word") String word) {
 		Integer countingForWord = dsb.getCountingForWord(processId, word);
 		SingleCount c = new SingleCount();
@@ -67,16 +72,9 @@ public class DocumentStatisticService {
 	@Produces({MediaType.APPLICATION_JSON})
 	@Count
 	public Response getWordStatistics(@PathParam("processId") String processId) {
-		WordStatistics statistics= dsb.getWordStatistics(processId);
-
-
+		WordStatistics statistics = dsb.getWordStatistics(processId);
 		Response r;
 		r = Response.ok(statistics).build();
 		return r;
-	}
-
-	@GET
-	public String greet() {
-		return "Hi!";
 	}
 }
