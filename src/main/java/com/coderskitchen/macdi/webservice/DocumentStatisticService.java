@@ -29,7 +29,6 @@ import java.net.URI;
  */
 @Path("/document")
 @ManagedBean
-@ProducerDefinition(category = "", producerId = "DocumentStatisticService")
 public class DocumentStatisticService {
 
 	@Context
@@ -47,7 +46,8 @@ public class DocumentStatisticService {
 		String newProcessId = pb.createNewProcessId();
 		dsb.createAndPersistStatistic(newProcessId, document);
 		UriBuilder baseUriBuilder = uriInfo.getBaseUriBuilder();
-		UriBuilder uriBuilder = baseUriBuilder.path(newProcessId);
+		String path = uriInfo.getPath();
+		UriBuilder uriBuilder = baseUriBuilder.path(path).path(newProcessId);
 		URI build = uriBuilder.build();
 		Response r = Response.created(build).build();
 		return r;
